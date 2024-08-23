@@ -24,7 +24,8 @@ class SQLiteDatabase {
             location TEXT,
             startTime TEXT,
             color TEXT,
-            endTime TEXT
+            endTime TEXT,
+            selectedDay TEXT
           )
         ''');
       },

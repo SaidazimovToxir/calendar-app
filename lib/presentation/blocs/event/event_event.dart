@@ -1,6 +1,5 @@
 part of 'event_bloc.dart';
 
-
 abstract class CalendarEvent {}
 
 class LoadEvents extends CalendarEvent {
@@ -23,7 +22,8 @@ class UpdateEvent extends CalendarEvent {
 }
 
 class DeleteEvent extends CalendarEvent {
+  final DateTime deleteTime;
   final String id;
 
-  DeleteEvent(this.id);
+  DeleteEvent(this.id, this.deleteTime);
 }

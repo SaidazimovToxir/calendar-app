@@ -9,6 +9,7 @@ class EventModel extends Event {
     required super.startTime,
     required super.color,
     required super.endTime,
+    required super.selectedDay,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +21,7 @@ class EventModel extends Event {
       'startTime': startTime.toIso8601String(),
       'endTime': endTime.toIso8601String(),
       'color': color,
+      'selectedDay': selectedDay.toIso8601String(),
     };
   }
 
@@ -32,6 +34,7 @@ class EventModel extends Event {
       startTime: DateTime.parse(map['startTime']),
       endTime: DateTime.parse(map['endTime']),
       color: int.parse(map['color']),
+      selectedDay: DateTime.parse(map['selectedDay']),
     );
   }
 }

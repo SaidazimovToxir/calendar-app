@@ -70,7 +70,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
           id: '',
           description: '',
           location: '',
-          color: 1,
+          color: 1, selectedDay: date,
         )
       ];
     }

@@ -48,7 +48,13 @@ class EventBloc extends Bloc<CalendarEvent, EventState> {
   Future<void> _onAddEvent(AddEvent event, Emitter<EventState> emit) async {
     try {
       await _addEvent.execute(event.event);
-      add(LoadEvents(DateTime(1950), DateTime(2950)));
+      add(
+        LoadEvents(
+          event.event.selectedDay,
+          DateTime(event.event.selectedDay.year, event.event.selectedDay.month,
+              event.event.selectedDay.day, 23, 59, 59),
+        ),
+      );
     } catch (e) {
       emit(CalendarError('Failed to add event: $e'));
     }
@@ -59,7 +65,11 @@ class EventBloc extends Bloc<CalendarEvent, EventState> {
     try {
       // await _eventRepository.updateEvent(event.event);
       await _updateEvent.execute(event.event);
-      add(LoadEvents(DateTime(1950), DateTime(2950)));
+      add(LoadEvents(
+        event.event.selectedDay,
+        DateTime(event.event.selectedDay.year, event.event.selectedDay.month,
+            event.event.selectedDay.day, 23, 59, 59),
+      ));
     } catch (e) {
       emit(CalendarError('Failed to update event: $e'));
     }
@@ -70,7 +80,13 @@ class EventBloc extends Bloc<CalendarEvent, EventState> {
     try {
       // await _eventRepository.deleteEvent(event.id);
       await _deleteEvent.execute(event.id);
-      add(LoadEvents(DateTime(1950), DateTime(2950)));
+      add(
+        LoadEvents(
+          event.deleteTime,
+          DateTime(event.deleteTime.year, event.deleteTime.month,
+              event.deleteTime.day, 23, 59, 59),
+        ),
+      );
     } catch (e) {
       emit(CalendarError('Failed to delete event: $e'));
     }

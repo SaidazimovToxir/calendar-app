@@ -8,6 +8,7 @@ class Event {
   final DateTime startTime;
   final int color;
   final DateTime endTime;
+  final DateTime selectedDay;
 
   Event({
     required this.id,
@@ -17,6 +18,7 @@ class Event {
     required this.startTime,
     required this.color,
     required this.endTime,
+    required this.selectedDay,
   });
 
   Color get colorAsColor => Color(color);

@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../core/utils/theme.dart';
+import '../../data/models/event_model.dart';
 import '../blocs/event/event_bloc.dart';
 import '../widgets/custom_calendar_widget.dart';
-import '../widgets/shimmer/shimmer_event_cart.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -42,13 +42,14 @@ class _CalendarPageState extends State<CalendarPage> {
             height: MediaQuery.of(context).size.width - 15,
             child: BlocBuilder<EventBloc, EventState>(
               builder: (context, state) {
-                // List<EventModel> events = [];
+                List<EventModel> events = [];
 
                 if (state is CalendarLoaded) {
-                  // events = state.events;
+                  events = state.events;
                 }
 
                 return CustomCalendarWidget(
+                  // isAddPage: false,
                   onMonthChanged: _updateAppBar,
                 );
               },
@@ -66,24 +67,24 @@ class _CalendarPageState extends State<CalendarPage> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Container(
-                  // width: 100,
-                  // height: 35,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: AppColor.primaryColor,
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddEventPage(
-                            dateTime: _focusedDay,
-                          ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddEventPage(
+                          dateTime: _focusedDay,
                         ),
-                      );
-                    },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    // width: 100,
+                    // height: 35,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColor.primaryColor,
+                    ),
                     child: const Center(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
@@ -117,7 +118,7 @@ class _CalendarPageState extends State<CalendarPage> {
       child: BlocBuilder<EventBloc, EventState>(
         builder: (context, state) {
           if (state is CalendarLoading) {
-            return const Center(child: ShimmerEventCard());
+            return const SizedBox.shrink();
           } else if (state is CalendarLoaded) {
             if (state.events.isEmpty) {
               return const Center(

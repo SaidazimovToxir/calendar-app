@@ -1,4 +1,3 @@
-/* 
 import 'package:calendar_app/core/utils/theme.dart';
 import 'package:calendar_app/presentation/widgets/calendar/week_day_label.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../../domain/entities/event.dart';
 import '../blocs/event/event_bloc.dart';
+
 class CustomCalendarWidget extends StatefulWidget {
   final Function(DateTime) onMonthChanged;
 
@@ -205,6 +205,7 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
             setState(() {
               _selectedDay = date;
             });
+            print(_selectedDay);
             context.read<EventBloc>().add(
                   LoadEvents(
                     date,
@@ -276,12 +277,9 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
     return DateTime(date.year, date.month, 1).weekday % 7;
   }
 }
- */
 
 
-
-
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
@@ -291,11 +289,13 @@ import '../blocs/event/event_bloc.dart';
 import '../widgets/calendar/week_day_label.dart';
 
 class CustomCalendarWidget extends StatelessWidget {
+  final bool isAddPage;
   final Function(DateTime) onMonthChanged;
 
   const CustomCalendarWidget({
     super.key,
     required this.onMonthChanged,
+    required this.isAddPage,
   });
 
   @override
@@ -304,15 +304,22 @@ class CustomCalendarWidget extends StatelessWidget {
       create: (_) => CalendarCubit(
         eventBloc: context.read<EventBloc>(),
       ),
-      child: _CalendarContent(onMonthChanged: onMonthChanged),
+      child: _CalendarContent(
+        onMonthChanged: onMonthChanged,
+        isAddPage: isAddPage,
+      ),
     );
   }
 }
 
 class _CalendarContent extends StatelessWidget {
+  final bool isAddPage;
   final Function(DateTime) onMonthChanged;
 
-  const _CalendarContent({required this.onMonthChanged});
+  const _CalendarContent({
+    required this.onMonthChanged,
+    required this.isAddPage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -422,7 +429,7 @@ class _CalendarContent extends StatelessWidget {
           },
           child: Container(
             alignment: Alignment.center,
-            margin: const EdgeInsets.all(10),
+            margin: EdgeInsets.all(isAddPage ? 0 : 10),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isSelected ? AppColor.primaryColor : null,
@@ -486,3 +493,4 @@ class _CalendarContent extends StatelessWidget {
     return DateTime(date.year, date.month, 1).weekday % 7;
   }
 }
+ */

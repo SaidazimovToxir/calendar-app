@@ -6,7 +6,8 @@ class CustomTextfield extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final int maxLines;
-  final IconData? suffixIcon;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
   final bool ignorePointers;
@@ -17,6 +18,7 @@ class CustomTextfield extends StatelessWidget {
     required this.controller,
     this.maxLines = 1,
     this.suffixIcon,
+    this.prefixIcon,
     this.onTap,
     this.onChanged,
     this.ignorePointers = false,
@@ -45,9 +47,8 @@ class CustomTextfield extends StatelessWidget {
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.all(Radius.circular(8)),
             ),
-            suffixIcon: suffixIcon != null
-                ? Icon(suffixIcon, color: Colors.blue)
-                : null,
+            suffixIcon: suffixIcon,
+            prefixIcon: prefixIcon,
           ),
         ),
       ],

@@ -80,14 +80,8 @@ class _EventDetailsScreenState extends State<EventDetailsPage> {
   }
 
   void _onDeleteEvent(BuildContext context) {
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (BuildContext context) {
-    //     return AnimatedDialog(id: _event.id!);
-    //   },
-    // );
-    context.read<EventBloc>().add(DeleteEvent(_event.id!));
+    context.read<EventBloc>().add(DeleteEvent(_event.id!, _event.selectedDay));
+    Navigator.pop(context);
   }
 
   Future<void> _onEditEvent() async {
