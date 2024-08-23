@@ -38,7 +38,8 @@ class _CalendarPageState extends State<CalendarPage> {
       appBar: CustomAppBar(dateTime: _focusedDay),
       body: Column(
         children: [
-          Expanded(
+          SizedBox(
+            height: MediaQuery.of(context).size.width - 15,
             child: BlocBuilder<EventBloc, EventState>(
               builder: (context, state) {
                 // List<EventModel> events = [];
@@ -54,15 +55,15 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   "Schedule",
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 Container(
@@ -87,7 +88,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 16.0,
-                          vertical: 8,
+                          vertical: 7,
                         ),
                         child: Text(
                           "+ Add Event",

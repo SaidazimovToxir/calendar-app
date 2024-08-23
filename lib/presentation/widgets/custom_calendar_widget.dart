@@ -1,3 +1,4 @@
+/* 
 import 'package:calendar_app/core/utils/theme.dart';
 import 'package:calendar_app/presentation/widgets/calendar/week_day_label.dart';
 import 'package:flutter/material.dart';
@@ -265,6 +266,216 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
         );
       },
     );
+  }
+
+  int _daysInMonth(DateTime date) {
+    return DateTime(date.year, date.month + 1, 0).day;
+  }
+
+  int _firstDayOfWeek(DateTime date) {
+    return DateTime(date.year, date.month, 1).weekday % 7;
+  }
+}
+ */
+
+
+
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
+import '../../core/utils/theme.dart';
+import '../blocs/calendar_cubit/calendar_cubit.dart';
+import '../blocs/event/event_bloc.dart';
+import '../widgets/calendar/week_day_label.dart';
+
+class CustomCalendarWidget extends StatelessWidget {
+  final Function(DateTime) onMonthChanged;
+
+  const CustomCalendarWidget({
+    super.key,
+    required this.onMonthChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => CalendarCubit(
+        eventBloc: context.read<EventBloc>(),
+      ),
+      child: _CalendarContent(onMonthChanged: onMonthChanged),
+    );
+  }
+}
+
+class _CalendarContent extends StatelessWidget {
+  final Function(DateTime) onMonthChanged;
+
+  const _CalendarContent({required this.onMonthChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CalendarCubit, CalendarState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            _buildCalendarHeader(context, state),
+            const Gap(10.0),
+            const WeekdayLabels(),
+            const Gap(10.0),
+            Expanded(
+              child: PageView.builder(
+                controller:
+                    PageController(initialPage: state.currentMonthIndex),
+                onPageChanged: (index) {
+                  final newMonth = _calculateMonthFromPageIndex(index);
+                  context.read<CalendarCubit>().changeMonth(newMonth);
+                  onMonthChanged(newMonth);
+                },
+                itemBuilder: (context, index) {
+                  final monthDate = _calculateMonthFromPageIndex(index);
+                  return _buildCalendarBody(context, monthDate, state);
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildCalendarHeader(BuildContext context, CalendarState state) {
+    String formattedDate = DateFormat('MMMM yyyy').format(state.focusedDay);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            formattedDate,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: const Color(0xffEFEFEF),
+                child: IconButton(
+                  icon: const Icon(Icons.chevron_left),
+                  onPressed: () {
+                    final newMonth = DateTime(
+                      state.focusedDay.year,
+                      state.focusedDay.month - 1,
+                    );
+                    context.read<CalendarCubit>().changeMonth(newMonth);
+                    onMonthChanged(newMonth);
+                  },
+                ),
+              ),
+              const Gap(10.0),
+              CircleAvatar(
+                backgroundColor: const Color(0xffEFEFEF),
+                child: IconButton(
+                  icon: const Icon(Icons.chevron_right),
+                  onPressed: () {
+                    final newMonth = DateTime(
+                        state.focusedDay.year, state.focusedDay.month + 1);
+                    context.read<CalendarCubit>().changeMonth(newMonth);
+                    onMonthChanged(newMonth);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCalendarBody(
+      BuildContext context, DateTime monthDate, CalendarState state) {
+    final daysInMonth = _daysInMonth(monthDate);
+    final firstDayOfWeek = _firstDayOfWeek(monthDate);
+
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+        childAspectRatio: 1,
+      ),
+      itemCount: daysInMonth + firstDayOfWeek,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        if (index < firstDayOfWeek) {
+          return Container();
+        }
+        final day = index - firstDayOfWeek + 1;
+        final date = DateTime(monthDate.year, monthDate.month, day);
+        final isSelected = state.selectedDay.year == date.year &&
+            state.selectedDay.month == date.month &&
+            state.selectedDay.day == date.day;
+        final dayEvents = state.events[date] ?? [];
+
+        return GestureDetector(
+          onTap: () {
+            context.read<CalendarCubit>().selectDay(date);
+            onMonthChanged(date);
+          },
+          child: Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? AppColor.primaryColor : null,
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Text(
+                  '$day',
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                    fontSize: isSelected ? 16 : 14,
+                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                  ),
+                ),
+                if (dayEvents.isNotEmpty)
+                  Positioned(
+                    bottom: -15,
+                    left: dayEvents.length == 1
+                        ? 4
+                        : dayEvents.length == 2
+                            ? -1
+                            : -6,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ...List.generate(
+                          dayEvents.length > 3 ? 3 : dayEvents.length,
+                          (index) => Container(
+                            width: 6,
+                            height: 6,
+                            margin: const EdgeInsets.symmetric(horizontal: 2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(dayEvents[index].color),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  DateTime _calculateMonthFromPageIndex(int pageIndex) {
+    final year = (pageIndex ~/ 12) + 2020;
+    final month = (pageIndex % 12) + 1;
+    return DateTime(year, month);
   }
 
   int _daysInMonth(DateTime date) {

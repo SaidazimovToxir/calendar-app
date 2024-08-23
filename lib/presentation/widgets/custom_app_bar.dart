@@ -19,6 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             formattedWeek,
             style: const TextStyle(
+              fontSize: 18,
               color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
@@ -32,6 +33,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(
+            Icons.notifications_rounded,
+            size: 25,
+          ),
+        ),
+      ],
     );
   }
 
