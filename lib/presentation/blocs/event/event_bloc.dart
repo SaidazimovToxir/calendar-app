@@ -36,7 +36,6 @@ class EventBloc extends Bloc<CalendarEvent, EventState> {
   Future<void> _onLoadEvents(LoadEvents event, Emitter<EventState> emit) async {
     emit(CalendarLoading());
     try {
-      // final events = await _eventRepository.getEvents(event.start, event.end);
       final events = await _getEvent.execute(event.start, event.end);
       emit(CalendarLoaded(events));
     } catch (e) {
@@ -63,7 +62,6 @@ class EventBloc extends Bloc<CalendarEvent, EventState> {
   Future<void> _onUpdateEvent(
       UpdateEvent event, Emitter<EventState> emit) async {
     try {
-      // await _eventRepository.updateEvent(event.event);
       await _updateEvent.execute(event.event);
       add(LoadEvents(
         event.event.selectedDay,
@@ -78,7 +76,6 @@ class EventBloc extends Bloc<CalendarEvent, EventState> {
   Future<void> _onDeleteEvent(
       DeleteEvent event, Emitter<EventState> emit) async {
     try {
-      // await _eventRepository.deleteEvent(event.id);
       await _deleteEvent.execute(event.id);
       add(
         LoadEvents(

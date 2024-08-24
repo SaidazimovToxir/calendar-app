@@ -29,7 +29,6 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const CalendarPage(),
           '/add_event': (context) => const AddEventPage(),
-          // '/details_page': (context) => const EventDetailsPage(event: event)
         },
       ),
     );

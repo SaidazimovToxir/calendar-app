@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:calendar_app/data/models/event_model.dart';
 import 'package:calendar_app/presentation/blocs/event/event_bloc.dart';
+import 'package:calendar_app/presentation/pages/add_event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -85,20 +86,20 @@ class _EventDetailsScreenState extends State<EventDetailsPage> {
   }
 
   Future<void> _onEditEvent() async {
-    // final updatedEvent = await Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => AddEventScreen(
-    //       event: _event,
-    //       dateTime: _event.dateTime,
-    //     ),
-    //   ),
-    // ) as Event?;
+    final updatedEvent = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddEventPage(
+          event: _event,
+          dateTime: _event.selectedDay,
+        ),
+      ),
+    ) as EventModel?;
 
-    // if (updatedEvent != null) {
-    //   setState(() {
-    //     _event = updatedEvent;
-    //   });
-    // }
+    if (updatedEvent != null) {
+      setState(() {
+        _event = updatedEvent;
+      });
+    }
   }
 }

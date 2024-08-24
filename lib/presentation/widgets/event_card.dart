@@ -106,11 +106,16 @@ class EventCard extends StatelessWidget {
                           color: Color(event.color),
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          event.location,
-                          style: TextStyle(
-                            color: Color(event.color),
-                            fontSize: 14,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 2.4,
+                          child: Text(
+                            event.location,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Color(event.color),
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ],

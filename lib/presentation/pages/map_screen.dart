@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
+
+import '../../core/utils/theme.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -19,7 +22,8 @@ class _MapScreenState extends State<MapScreen> {
   final YandexSearch yandexSearch = YandexSearch();
   final TextEditingController _searchTextController = TextEditingController();
   double searchHeight = 250;
-  ValueNotifier<bool> nightLight = ValueNotifier(false);
+  String? _selectedStreet;
+  Point? _selectedPoint;
 
   List<SuggestItem> _suggestionList = [];
   final Point najotTalim = const Point(
@@ -93,7 +97,6 @@ class _MapScreenState extends State<MapScreen> {
       body: Stack(
         children: [
           YandexMap(
-            nightModeEnabled: nightLight.value,
             onMapCreated: (controller) {
               mapController = controller;
               mapController.moveCamera(
@@ -106,9 +109,26 @@ class _MapScreenState extends State<MapScreen> {
               );
             },
             onMapTap: (point) async {
-              // double latitude = point.latitude;
-              // double longitude = point.longitude;
               print(point);
+              // List<Placemark> placemarks = await placemarkFromCoordinates(
+              //   point.latitude,
+              //   point.longitude,
+              // );
+              // if (placemarks.isNotEmpty) {
+              //   print("${placemarks.first.street}");
+              // }
+
+              List<Placemark> placemarks = await placemarkFromCoordinates(
+                point.latitude,
+                point.longitude,
+              );
+              if (placemarks.isNotEmpty) {
+                setState(() {
+                  _selectedStreet = placemarks.first.street;
+                  _selectedPoint = point;
+                });
+                _showLocationBottomSheet(context);
+              }
             },
             mapType: MapType.vector,
             mapObjects: [
@@ -118,7 +138,7 @@ class _MapScreenState extends State<MapScreen> {
                 opacity: 1,
                 icon: PlacemarkIcon.single(
                   PlacemarkIconStyle(
-                    scale: nightLight.value ? 0.4 : 0.2,
+                    scale: 0.2,
                     image: BitmapDescriptor.fromAssetImage(
                       "assets/marker1.png",
                     ),
@@ -149,7 +169,7 @@ class _MapScreenState extends State<MapScreen> {
               height: _suggestionList.isNotEmpty ? searchHeight : 0,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: nightLight.value ? Colors.grey[700] : Colors.white,
+                color: Colors.white,
               ),
               child: ListView.builder(
                 itemCount: _suggestionList.length,
@@ -158,8 +178,8 @@ class _MapScreenState extends State<MapScreen> {
                     onTap: () => _onSearchItemSelected(_suggestionList[index]),
                     title: Text(
                       _suggestionList[index].title,
-                      style: TextStyle(
-                        color: nightLight.value ? Colors.white : Colors.black,
+                      style: const TextStyle(
+                        color: Colors.black,
                       ),
                     ),
                     subtitle: Text(
@@ -178,8 +198,8 @@ class _MapScreenState extends State<MapScreen> {
             child: Column(
               children: [
                 TextField(
-                  style: TextStyle(
-                    color: nightLight.value ? Colors.white : Colors.black,
+                  style: const TextStyle(
+                    color: Colors.black,
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                   ),
@@ -198,13 +218,12 @@ class _MapScreenState extends State<MapScreen> {
                           )
                         : null,
                     filled: true,
-                    fillColor:
-                        nightLight.value ? Colors.grey[700] : Colors.white,
+                    fillColor: Colors.white,
                     prefixIcon: const Icon(Icons.location_on_rounded,
                         color: Colors.teal),
                     hintText: "Search",
-                    hintStyle: TextStyle(
-                      color: nightLight.value ? Colors.white : Colors.black,
+                    hintStyle: const TextStyle(
+                      color: Colors.black,
                       fontWeight: FontWeight.w400,
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -243,9 +262,7 @@ class _MapScreenState extends State<MapScreen> {
                     height: 45,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: nightLight.value
-                          ? Colors.teal[700]
-                          : Colors.teal.withOpacity(.8),
+                      color: Colors.teal.withOpacity(.8),
                     ),
                     child: const Icon(Icons.add, color: Colors.white),
                   ),
@@ -260,9 +277,7 @@ class _MapScreenState extends State<MapScreen> {
                     height: 45,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: nightLight.value
-                          ? Colors.teal[700]
-                          : Colors.teal.withOpacity(.8),
+                      color: Colors.teal.withOpacity(.8),
                     ),
                     child: const Icon(Icons.remove, color: Colors.white),
                   ),
@@ -274,7 +289,7 @@ class _MapScreenState extends State<MapScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
-        backgroundColor: nightLight.value ? Colors.teal : Colors.teal,
+        backgroundColor: Colors.teal,
         onPressed: () async {
           _currentLocation = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high,
@@ -287,6 +302,67 @@ class _MapScreenState extends State<MapScreen> {
         },
         child: const Icon(CupertinoIcons.location_fill, color: Colors.white),
       ),
+    );
+  }
+
+  void _showLocationBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Selected Location',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Text(
+                    "Tanlangan joy: ",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    _selectedStreet ?? 'Unknown street',
+                    style: TextStyle(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context, {
+                    'street': _selectedStreet,
+                    'latitude': _selectedPoint?.latitude,
+                    'longitude': _selectedPoint?.longitude,
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Select location',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

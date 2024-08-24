@@ -283,13 +283,15 @@ class _AddEventPageState extends State<AddEventPage> {
                             ),
                           )
                         : IconButton(
-                            onPressed: () {
-                              Navigator.push(
+                            onPressed: () async {
+                              final result = await Navigator.push(
                                 context,
                                 CupertinoPageRoute(
                                   builder: (_) => const MapScreen(),
                                 ),
                               );
+                              _locationController.text = result['street'];
+                              
                             },
                             icon: Icon(
                               Icons.map_rounded,
@@ -383,5 +385,3 @@ class _AddEventPageState extends State<AddEventPage> {
     );
   }
 }
-
-
