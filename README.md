@@ -1,16 +1,6 @@
-# calendar_app
+# App Screenshots
+**1**<br>
+<img src="https://github.com/user-attachments/assets/e2548c14-19b9-4cf9-9065-d642a9f045f7" width="300"/>
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**2**<br>
+<img src="https://github.com/user-attachments/assets/4831f769-285d-4d4e-95e1-8b4ec4ed4f23" width="300"/>
